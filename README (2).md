@@ -5,8 +5,8 @@
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/your-project.git
-    cd your-project
+    git clone https://github.com/e9gsrivastava/k2.git
+    cd k2
     ```
 
 2. Create a virtual environment:
