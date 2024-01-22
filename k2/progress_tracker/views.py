@@ -28,7 +28,7 @@ def logout_view(request):
     return redirect("progress_tracker:login")
 
 
-@login_required
+@login_required(login_url='progress_tracker:login')
 def student_list(request):
     progress_reports = ProgressReport.objects.select_related("trainee").all()
 
@@ -50,7 +50,7 @@ def student_list(request):
     )
 
 
-@login_required
+@login_required(login_url='progress_tracker:login')
 def update_progress_report(request, pk):
     progress_report = get_object_or_404(ProgressReport, pk=pk)
 
@@ -67,7 +67,7 @@ def update_progress_report(request, pk):
     )
 
 
-@login_required
+@login_required(login_url='progress_tracker:login')
 def progress_graph(request):
     all_trainees = Trainee.objects.all()
     attendance_data = {}
@@ -83,7 +83,7 @@ def progress_graph(request):
     )
 
 
-@login_required
+@login_required(login_url='progress_tracker:login')
 def marksheet(request):
     all_trainees = Trainee.objects.all()
     mark_data = {}
@@ -95,7 +95,7 @@ def marksheet(request):
     return render(request, "progress_tracker/marksheet.html", {"mark_data": mark_data})
 
 
-@login_required
+@login_required(login_url='progress_tracker:login')
 def assignmnet_report(request):
     all_trainees = Trainee.objects.all()
     assignment_data = {}
@@ -111,7 +111,7 @@ def assignmnet_report(request):
     )
 
 
-@login_required
+@login_required(login_url='progress_tracker:login')
 def overall_progress(request):
     all_trainees = Trainee.objects.all()
     overall_data = {}
