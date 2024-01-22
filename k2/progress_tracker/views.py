@@ -1,11 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Trainee, ProgressReport
 from .forms import ProgressReportForm
 from django.db.models import Avg
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
 
 
 def login_view(request):
@@ -31,6 +31,18 @@ def logout_view(request):
 @login_required
 def student_list(request):
     progress_reports = ProgressReport.objects.select_related("trainee").all()
+
+    items_per_page = 6
+    paginator = Paginator(progress_reports, items_per_page)
+
+    page = request.GET.get('page')
+    try:
+        progress_reports = paginator.page(page)
+    except PageNotAnInteger:
+        progress_reports = paginator.page(1)
+    except EmptyPage:
+        progress_reports = paginator.page(paginator.num_pages)
+
     return render(
         request,
         "progress_tracker/student_list.html",
@@ -39,42 +51,19 @@ def student_list(request):
 
 
 @login_required
-def update_progress_report(request):
+def update_progress_report(request, pk):
+    progress_report = get_object_or_404(ProgressReport, pk=pk)
+
     if request.method == "POST":
         form = ProgressReportForm(request.POST)
         if form.is_valid():
-            progress_report_id = form.cleaned_data["progress_report_id"]
-            marks = form.cleaned_data["marks"]
-            comments = form.cleaned_data["comments"]
-
-            progress_report = get_object_or_404(ProgressReport, id=progress_report_id)
-
-            progress_report.marks = marks
-            progress_report.comments = comments
-            progress_report.save()
-
+            form.save()
             return redirect("progress_tracker:student_list")
     else:
         form = ProgressReportForm()
 
     return render(
-        request, "progress_tracker/update_progress_report.html", {"form": form}
-    )
-
-
-@login_required
-def progress_graph(request):
-    all_trainees = Trainee.objects.all()
-    attendance_data = {}
-    for trainee in all_trainees:
-        progress_reports = ProgressReport.objects.filter(trainee=trainee)
-        percentages = [report.attendance / 100.0 for report in progress_reports]
-        attendance_data[trainee.username] = percentages
-
-    return render(
-        request,
-        "progress_tracker/progress_graph.html",
-        {"attendance_data": attendance_data},
+        request, "progress_tracker/update_progress_report.html", {"form": form, 'pk': pk}
     )
 
 
@@ -120,7 +109,6 @@ def assignmnet_report(request):
         "progress_tracker/assignmnet_report.html",
         {"assignment_data": assignment_data},
     )
-
 
 
 @login_required

@@ -1,16 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-    .green-box {
-      width: 25px; 
-      height: 25px; 
-      background-color: green;
-      border: 1px solid black;
-    }
+        .green-box {
+            width: 25px;
+            height: 25px;
+            background-color: green;
+            border: 1px solid black;
+            position: relative;
+        }
+
+        .tooltip-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            display: none;
+        }
+
+        .green-box:hover .tooltip-text {
+            display: block;
+        }
 
         .back-button {
             margin-top: 20px;
@@ -20,13 +36,13 @@
             text-decoration: none;
             border-radius: 5px;
         }
-    
+
         .back-button:hover {
             background-color: #0056b3;
         }
-
     </style>
 </head>
+
 <body>
     <div class="container mt-4">
         <h1>Marksheet</h1>
@@ -51,7 +67,11 @@
                     <tr>
                         <td>{{ username }}</td>
                         {% for mark in marks %}
-                            <td><div class="green-box" style="opacity: {{ mark }};"></div></td>
+                            <td>
+                                <div class="green-box" style="opacity: {{ mark }};">
+                                    <div class="tooltip-text">{{ mark }}%</div>
+                                </div>
+                            </td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
@@ -62,12 +82,10 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
 
-<div class="d-flex" style="justify-content: center;">
-    <a class="back-button" href="/students/">Back</a>
-  </div>
-
+    <div class="d-flex" style="justify-content: center;">
+        <a class="back-button" href="/students/">Back</a>
+    </div>
 </body>
 
 </html>

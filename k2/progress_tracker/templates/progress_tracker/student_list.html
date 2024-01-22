@@ -13,7 +13,7 @@
         }
 
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #ddd; 
             padding: 8px;
             text-align: left;
         }
@@ -51,7 +51,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                <a class="nav-link border border-dark" href="/progress_graph/" style="color: white;">Progress Graph <span class="sr-only"></span></a>
+                <a class="nav-link border border-dark" href="/progress_graph/" style="color: white;">Attendance Report <span class="sr-only"></span></a>
                 </li>
                 <li class="nav-item ml-2 active">
                     <a class="nav-link border border-dark" href="/assignmnet_report/" style="color: white;">assigment_report <span class="sr-only"></span></a>
@@ -73,8 +73,8 @@
         </div>
     </nav>
 </br>
-    <div p-3>
-        <h2>Progress Report Detail</h2>
+<div p-3>
+    <h2>Progress Report Detail</h2>
 
     <table>
         <tr>
@@ -82,10 +82,11 @@
             <th>Username</th>
             <th>Trainee</th>
             <th>Week Number</th>
-            <th>Attendance</th>
-            <th>Assignment</th>
+            <th>Attendance %</th>
+            <th>Assignment %</th>
             <th>Marks</th>
             <th>Comments</th>
+            <th>Update</th>
         </tr>
         {% for progress_report in progress_reports %}
             <tr>
@@ -95,28 +96,34 @@
                 <td>{{ progress_report.week_number }}</td>
                 <td>{{ progress_report.attendance }}</td>
                 <td>{{ progress_report.assignment }}</td>
+                <td>{{ progress_report.marks }}</td>
+                <td>{{ progress_report.comments }}</td>
                 <td>
-                    <form method="post" action="{% url 'progress_tracker:update_progress_report' %}">
-
-                       
-                        {% csrf_token %}
-                        <input type="hidden" name="progress_report_id" value="{{ progress_report.id }}">
-                        <input type="number" name="marks" value="{{ progress_report.marks }}">
-                        <button type="submit">Save Marks</button>
-                    </form>
-                </td>
-                <td>
-                    <form method="post" action="{% url 'progress_tracker:update_progress_report' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="progress_report_id" value="{{ progress_report.id }}">
-                        <textarea name="comments">{{ progress_report.comments }}</textarea>
-                        <button type="submit">Save Comments</button>
-                    </form>
+                    <a href="{% url 'progress_tracker:update_progress_report' progress_report.pk %}" class="btn btn-primary">Update</a>
                 </td>
             </tr>
         {% endfor %}
     </table>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if progress_reports.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ progress_reports.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ progress_reports.number }} of {{ progress_reports.paginator.num_pages }}.
+            </span>
+
+            {% if progress_reports.has_next %}
+                <a href="?page={{ progress_reports.next_page_number }}">next</a>
+                <a href="?page={{ progress_reports.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
     </div>
-</body>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
 </html>

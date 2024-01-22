@@ -45,7 +45,7 @@
     <div class="container mt-5">
         <div class="p-3 bg-light border rounded">
             <h2 class="mb-4">Update Progress Report</h2>
-            <form method="post" action="{% url 'progress_tracker:update_progress_report' %}">
+            <form method="post" action="{% url 'progress_tracker:update_progress_report' pk %}">
                 {% csrf_token %}
                 <div class="mb-3 form-control">
                     {{ form.as_p }}
