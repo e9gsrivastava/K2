@@ -55,8 +55,9 @@ def update_progress_report(request, pk):
     progress_report = get_object_or_404(ProgressReport, pk=pk)
 
     if request.method == "POST":
-        form = ProgressReportForm(request.POST)
+        form = ProgressReportForm(request.POST,instance=progress_report)
         if form.is_valid():
+            form.instance.week_number = 1
             form.save()
             return redirect("progress_tracker:student_list")
     else:
