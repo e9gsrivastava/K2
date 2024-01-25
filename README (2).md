@@ -47,7 +47,13 @@
     python manage.py createsuperuser
     ```
 
-7. Run the development server:
+7. Run below command to generate random data:
+
+    ```bash
+    python manage.py utils
+    ```
+
+8. Run the development server:
 
     ```bash
     python manage.py runserver
