@@ -10,38 +10,9 @@
 </head>
 <body>
     
-    <div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-            <a class="navbar-brand" href="">K2</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-          
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                    <a class="nav-link border border-dark" href="/progress_graph/" style="color: white;">Progress Graph <span class="sr-only"></span></a>
-                    </li>
-                    <li class="nav-item ml-2 active">
-                        <a class="nav-link border border-dark" href="/assignmnet_report/" style="color: white;">assigment_report <span class="sr-only"></span></a>
-                    </li>
-                    <li class="nav-item ml-2 active">
-                        <a class="nav-link border border-dark" href="/marksheet/" style="color: white;">marksheet <span class="sr-only"></span></a>
-                    </li>
-                    <li class="nav-item ml-2 active">
-                        <a class="nav-link border border-dark" href="/overall_progress/" style="color: white;">overall_progress <span class="sr-only"></span></a>
-                    </li>
-    
-                </ul>
-    
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                    <a class="nav-link border border-dark" href="logout" style="position: right; color:white; background: red;">Logout <span class="sr-only"></span></a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </div>
+   {% extends "progress_tracker/base.html" %}
+
+   {% block content %}
     <div class="container mt-5">
         <div class="p-3 bg-light border rounded">
             <h2 class="mb-4">Update Progress Report</h2>
@@ -54,7 +25,7 @@
             </form>
         </div>
     </div>
-    
+    {% endblock %}
     
 </body>
 </html>

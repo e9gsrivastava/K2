@@ -10,7 +10,7 @@ urlpatterns = [
     path(
         "update-progress-report/<int:pk>/",
         views.update_progress_report,
-        name="update_progress_report"
+        name="update_progress_report",
     ),
     path("progress_graph/", views.progress_graph, name="progress_graph"),
     path("marksheet/", views.marksheet, name="marksheet"),
