@@ -28,14 +28,16 @@ def logout_view(request):
     return redirect("progress_tracker:login")
 
 
-@login_required(login_url="progress_tracker:login")
+@login_required(login_url='progress_tracker:login')
 def student_list(request):
+
+        
     progress_reports = ProgressReport.objects.select_related("trainee").all()
 
     items_per_page = 6
     paginator = Paginator(progress_reports, items_per_page)
 
-    page = request.GET.get("page")
+    page = request.GET.get('page')
     try:
         progress_reports = paginator.page(page)
     except PageNotAnInteger:
@@ -50,34 +52,30 @@ def student_list(request):
     )
 
 
-@login_required(login_url="progress_tracker:login")
+@login_required
 def update_progress_report(request, pk):
     progress_report = get_object_or_404(ProgressReport, pk=pk)
 
     if request.method == "POST":
         form = ProgressReportForm(request.POST, instance=progress_report)
         if form.is_valid():
-            form.instance.week_number = 1
+            form.instance.week_number = 1  
             form.save()
             return redirect("progress_tracker:student_list")
     else:
         form = ProgressReportForm()
 
     return render(
-        request,
-        "progress_tracker/update_progress_report.html",
-        {"form": form, "pk": pk},
+        request, "progress_tracker/update_progress_report.html", {"form": form, 'pk': pk}
     )
 
 
-@login_required(login_url="progress_tracker:login")
+@login_required
 def progress_graph(request):
     all_trainees = Trainee.objects.all()
     attendance_data = {}
     for trainee in all_trainees:
-        progress_reports = ProgressReport.objects.filter(trainee=trainee)
-        percentages = [report.attendance / 100.0 for report in progress_reports]
-        attendance_data[trainee.username] = percentages
+        attendance_data[trainee.username] = trainee.progress
 
     return render(
         request,
@@ -86,26 +84,24 @@ def progress_graph(request):
     )
 
 
-@login_required(login_url="progress_tracker:login")
+@login_required
 def marksheet(request):
     all_trainees = Trainee.objects.all()
     mark_data = {}
     for trainee in all_trainees:
-        progress_reports = ProgressReport.objects.filter(trainee=trainee)
-        marks = [report.marks / 100.0 for report in progress_reports]
-        mark_data[trainee.username] = marks
+        
+        mark_data[trainee.username] = trainee.get_marks
 
     return render(request, "progress_tracker/marksheet.html", {"mark_data": mark_data})
 
 
-@login_required(login_url="progress_tracker:login")
+@login_required
 def assignmnet_report(request):
     all_trainees = Trainee.objects.all()
     assignment_data = {}
     for trainee in all_trainees:
-        progress_reports = ProgressReport.objects.filter(trainee=trainee)
-        assignments = [report.assignment / 100.0 for report in progress_reports]
-        assignment_data[trainee.username] = assignments
+        
+        assignment_data[trainee.username] = trainee.get_assignment
 
     return render(
         request,
@@ -114,35 +110,13 @@ def assignmnet_report(request):
     )
 
 
-@login_required(login_url="progress_tracker:login")
+@login_required
 def overall_progress(request):
     all_trainees = Trainee.objects.all()
     overall_data = {}
 
     for trainee in all_trainees:
-        progress_reports = ProgressReport.objects.filter(trainee=trainee)
-
-        attendance_percentage = (
-            progress_reports.aggregate(average=Avg("attendance"))["average"] / 100.0
-            if progress_reports
-            else 0
-        )
-        marks_percentage = (
-            progress_reports.aggregate(average=Avg("marks"))["average"] / 100.0
-            if progress_reports
-            else 0
-        )
-        assignment_percentage = (
-            progress_reports.aggregate(average=Avg("assignment"))["average"] / 100.0
-            if progress_reports
-            else 0
-        )
-
-        overall_average = (
-            attendance_percentage + marks_percentage + assignment_percentage
-        ) / 3
-
-        overall_data[trainee.username] = overall_average
+        overall_data[trainee.username] = trainee.get_progress
 
     return render(
         request,
