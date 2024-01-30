@@ -48,7 +48,7 @@
 
    {% block content %}
     <div class="container mt-4">
-        <h1>Assignment Report</h1>
+        <h1>Assignment </h1>
         <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
@@ -65,7 +65,7 @@
                     <th scope="col">W10</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class= 'border border-collapse'>
                 {% for username, assignments in assignment_data.items %}
                     <tr>
                         <td>{{ username }}</td>

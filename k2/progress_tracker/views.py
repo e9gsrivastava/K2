@@ -11,6 +11,19 @@ from .forms import ProgressReportForm
 from django.db.models import Avg
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
+from django.contrib.auth.views import LogoutView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.views.generic import ListView
+from .models import ProgressReport
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from .forms import ProgressReportForm
+from .models import ProgressReport
+from django.views.generic import UpdateView
+from django.utils.decorators import method_decorator
 
 class LoginView(LoginView):
     template_name = 'progress_tracker/login.html'
@@ -18,21 +31,10 @@ class LoginView(LoginView):
     def form_valid(self, form):
         user = form.get_user()
         login(self.request, user)
-        return redirect(reverse_lazy('progress_tracker:student_list'))
-
-
-
-from django.contrib.auth.views import LogoutView
-from django.urls import reverse_lazy
+        return redirect(reverse_lazy('progress_tracker:overall_progress'))
 
 class LogoutView(LogoutView):
     next_page = reverse_lazy('progress_tracker:login')
-
-
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-from django.views.generic import ListView
-from .models import ProgressReport
 
 class StudentListView(LoginRequiredMixin, ListView):
     model = ProgressReport
@@ -45,25 +47,29 @@ class StudentListView(LoginRequiredMixin, ListView):
         return queryset.select_related('trainee')
 
 
-@login_required
-def update_progress_report(request, pk):
-    ''''this function updates marks and comments'''
-    progress_report = get_object_or_404(ProgressReport, pk=pk)               
+from django.views.generic import DetailView
 
-    if request.method == "POST":
-        form = ProgressReportForm(request.POST, instance=progress_report)
-        if form.is_valid():
-            form.instance.week_number = 1
-            form.save()
-            return redirect("progress_tracker:student_list")
-    else:
-        form = ProgressReportForm()
+class StudentDetailView(ListView):
+    model = ProgressReport
+    template_name = 'progress_tracker/student_detail.html'
+    context_object_name = 'progress_report'
 
-    return render(
-        request,
-        "progress_tracker/update_progress_report.html",
-        {"form": form, "pk": pk},
-    )
+    def get_queryset(self):
+        return self.model.objects.get(pk = self.kwargs['pk'])
+    
+
+method_decorator(login_required, name='dispatch')
+class UpdateProgressReportView(UpdateView):
+    model = ProgressReport
+    form_class = ProgressReportForm
+    template_name = "progress_tracker/update_progress_report.html"
+    
+    def form_valid(self, form):
+        form.instance.week_number = 1
+        return super().form_valid(form)
+
+
+
 
 
 @login_required

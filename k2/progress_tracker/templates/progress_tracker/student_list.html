@@ -57,7 +57,7 @@
             <th>Week Number</th>
             <th>Attendance %</th>
             <th>Assignment %</th>
-            <th>Marks</th>
+            <th>Marks By Mentor</th>
             <th>Comments</th>
             <th>Update</th>
         </tr>
@@ -79,25 +79,6 @@
     </table>
 </br>
      <div class="d-flex justify-content-center">
-     {% comment %}   <div class="pagination">
-            <span class="step-links">
-                {% if progress_reports.has_previous %}
-                    <a href="?page=1" class="btn btn-outline-primary">&laquo; first</a>
-                    <a href="?page={{ progress_reports.previous_page_number }}" class="btn btn-outline-primary">previous</a>
-                {% endif %}
-    
-                <span class="current">
-                    Page {{ progress_reports.number }} of {{ progress_reports.paginator.num_pages }}.
-                </span>
-    
-                {% if progress_reports.has_next %}
-                    <a href="?page={{ progress_reports.next_page_number }}" class="btn btn-outline-primary">next</a>
-                    <a href="?page={{ progress_reports.paginator.num_pages }}" class="btn btn-outline-primary">last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
-    </div> {% endcomment %}
-
 
     <div class="pagination">
         <span class="step-links">

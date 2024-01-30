@@ -53,6 +53,9 @@ class Trainee(models.Model):
         assignments = [report.assignment / 100.0 for report in progress_reports]
         return assignments
     
+    def __str__(self):
+        return self.username
+    
 
 class ProgressReport(models.Model):
     trainee = models.ForeignKey(Trainee, on_delete=models.CASCADE)

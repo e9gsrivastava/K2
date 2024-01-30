@@ -60,19 +60,23 @@
                     <th scope="col">Overall</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for username, overall_average in overall_data.items %}
-                    <tr>
-                        <td>{{ username }}</td>
-                        <td>
-                            <div class="green-box" style="opacity: {{ overall_average }};">
-                                <!-- Add tooltip text inside the green box -->
-                                <div class="tooltip-text">{{ overall_average }}%</div>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+          <tbody>
+    {% for username, overall_average in overall_data.items %}
+        <tr>
+            <td>
+                <a href="{% url 'progress_tracker:student_detail' pk=user.pk %}">
+                    {{ username }}
+                </a>
+            </td>
+            <td>
+                <div class="green-box" style="opacity: {{ overall_average }};">
+                    <!-- Add tooltip text inside the green box -->
+                    <div class="tooltip-text">{{ overall_average }}%</div>
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>
         </table>
     </div>
 
