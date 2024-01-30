@@ -4,9 +4,10 @@ from . import views
 app_name = "progress_tracker"
 
 urlpatterns = [
-    path("", views.login_view, name="login"),
-    path("logout/", views.logout_view, name="logout"),
-    path("students/", views.student_list, name="student_list"),
+
+    path("", views.LoginView.as_view(), name="login"),
+    path("logout/", views.LogoutView.as_view(), name="logout"),
+    path("students/", views.StudentListView.as_view(), name="student_list"),
     path(
         "update-progress-report/<int:pk>/",
         views.update_progress_report,

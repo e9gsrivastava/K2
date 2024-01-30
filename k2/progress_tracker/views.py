@@ -9,57 +9,46 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Trainee, ProgressReport
 from .forms import ProgressReportForm
 from django.db.models import Avg
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+
+class LoginView(LoginView):
+    template_name = 'progress_tracker/login.html'
+
+    def form_valid(self, form):
+        user = form.get_user()
+        login(self.request, user)
+        return redirect(reverse_lazy('progress_tracker:student_list'))
 
 
-def login_view(request):
-    '''this function creates login view'''
-    if request.method == "POST":
-        form = AuthenticationForm(request, request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            user = authenticate(request, username=username, password=password)
-            if user:
-                login(request, user)
-                return redirect("progress_tracker:student_list")
-    else:
-        form = AuthenticationForm()
-    return render(request, "progress_tracker/login.html", {"form": form})
+
+from django.contrib.auth.views import LogoutView
+from django.urls import reverse_lazy
+
+class LogoutView(LogoutView):
+    next_page = reverse_lazy('progress_tracker:login')
 
 
-def logout_view(request):
-    '''this function creates logout view'''
-    logout(request)
-    return redirect("progress_tracker:login")
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.views.generic import ListView
+from .models import ProgressReport
 
+class StudentListView(LoginRequiredMixin, ListView):
+    model = ProgressReport
+    template_name = 'progress_tracker/student_list.html'
+    context_object_name = 'progress_reports'
+    paginate_by = 6
 
-@login_required(login_url="progress_tracker:login")
-def student_list(request):
-    '''this function shows all the data of trainee'''
-    progress_reports = ProgressReport.objects.select_related("trainee").all()
-
-    items_per_page = 6
-    paginator = Paginator(progress_reports, items_per_page)
-
-    page = request.GET.get("page")
-    try:
-        progress_reports = paginator.page(page)
-    except PageNotAnInteger:
-        progress_reports = paginator.page(1)
-    except EmptyPage:
-        progress_reports = paginator.page(paginator.num_pages)
-
-    return render(
-        request,
-        "progress_tracker/student_list.html",
-        {"progress_reports": progress_reports},
-    )
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.select_related('trainee')
 
 
 @login_required
 def update_progress_report(request, pk):
     ''''this function updates marks and comments'''
-    progress_report = get_object_or_404(ProgressReport, pk=pk)
+    progress_report = get_object_or_404(ProgressReport, pk=pk)               
 
     if request.method == "POST":
         form = ProgressReportForm(request.POST, instance=progress_report)
