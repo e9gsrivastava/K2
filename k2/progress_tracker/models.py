@@ -13,26 +13,29 @@ class Trainee(models.Model):
     def get_progress(self):
         progress_reports = ProgressReport.objects.filter(trainee=self)
 
-        attendance_percentage = (
-            progress_reports.aggregate(average=Avg("attendance"))["average"] / 100.0
-            if progress_reports
-            else 0
-        )
-        marks_percentage = (
-            progress_reports.aggregate(average=Avg("marks"))["average"] / 100.0
-            if progress_reports
-            else 0
-        )
-        assignment_percentage = (
-            progress_reports.aggregate(average=Avg("assignment"))["average"] / 100.0
-            if progress_reports
-            else 0
-        )
+        if progress_reports:
+            attendance_aggregate = progress_reports.aggregate(average=Avg("attendance"))
+            average_attendance = attendance_aggregate["average"]
+            attendance_percentage = average_attendance / 100.0
+        else:
+            attendance_percentage = 0
 
-        return (
-            attendance_percentage + marks_percentage + assignment_percentage
-        ) / 3
-    
+        if progress_reports:
+            marks_aggregate = progress_reports.aggregate(average=Avg("marks"))
+            average_marks = marks_aggregate["average"]
+            marks_percentage = average_marks / 100.0
+        else:
+            marks_percentage = 0
+
+        if progress_reports:
+            assignment_aggregate = progress_reports.aggregate(average=Avg("assignment"))
+            average_assignment = assignment_aggregate["average"]
+            assignment_percentage = average_assignment / 100.0
+        else:
+            assignment_percentage = 0
+
+        return (attendance_percentage + marks_percentage + assignment_percentage) / 3
+
     @property
     def progress(self):
 
@@ -40,22 +43,22 @@ class Trainee(models.Model):
         percentages = [report.attendance / 100.0 for report in progress_reports]
 
         return percentages
-    
+
     @property
     def get_marks(self):
         progress_reports = ProgressReport.objects.filter(trainee=self)
         marks = [report.marks / 100.0 for report in progress_reports]
         return marks
-    
+
     @property
     def get_assignment(self):
         progress_reports = ProgressReport.objects.filter(trainee=self)
         assignments = [report.assignment / 100.0 for report in progress_reports]
         return assignments
-    
+
     def __str__(self):
         return self.username
-    
+
 
 class ProgressReport(models.Model):
     trainee = models.ForeignKey(Trainee, on_delete=models.CASCADE)
